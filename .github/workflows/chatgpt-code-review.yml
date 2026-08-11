@@ -1,0 +1,33 @@
+name: ChatGPT Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: ChatGPT Code Review
+        uses: unsafecoerce/chatgpt-action@release/v2
+        with:
+          action: 'review'
+          debug: false
+          path_filters: |
+            src/**/*.py
+            src/**/*.js
+            src/**/*.ts
+            !node_modules/**
+            !dist/**
+          review_comment_lgtm: false
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
